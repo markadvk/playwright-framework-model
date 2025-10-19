@@ -1,0 +1,70 @@
+# ===============================
+#   EditorConfig for Playwright + TypeScript Projects
+#   Ensures consistent formatting across editors & OS
+# ===============================
+
+# Top-most EditorConfig file
+root = true
+
+# ===============================
+#   Global Settings
+# ===============================
+[*]
+charset = utf-8               # Use UTF-8 for all files
+end_of_line = lf              # Normalize line endings to LF (cross-OS safe)
+insert_final_newline = true   # Always add a newline at the end of files
+trim_trailing_whitespace = true
+indent_style = space          # Use spaces, not tabs
+indent_size = 2               # 2 spaces for TypeScript/JS consistency
+
+# ===============================
+#   Markdown / Documentation Files
+# ===============================
+[*.md]
+trim_trailing_whitespace = false   # Allow spaces for markdown formatting
+
+# ===============================
+#   YAML / JSON Config Files
+# ===============================
+[*.{yml,yaml,json}]
+indent_size = 2
+indent_style = space
+
+# ===============================
+#   Shell / Batch Scripts
+# ===============================
+[*.sh]
+end_of_line = lf
+indent_style = space
+indent_size = 2
+
+[*.{bat,cmd}]
+end_of_line = crlf
+indent_style = tab
+
+# ===============================
+#   HTML / CSS Files
+# ===============================
+[*.{html,css}]
+indent_style = space
+indent_size = 2
+
+# ===============================
+#   TypeScript / JavaScript Files
+# ===============================
+[*.{ts,tsx,js,jsx}]
+indent_style = space
+indent_size = 2
+quote_type = single            # Prefer single quotes (if editor supports)
+insert_final_newline = true
+
+# ===============================
+#   JSON Reports or Snapshots
+# ===============================
+[test-results/**.json]
+indent_size = 2
+insert_final_newline = false
+
+# ===============================
+#   End of File
+# ===============================

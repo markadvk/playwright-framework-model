@@ -1,0 +1,35 @@
+{
+  "name": "playwright-portfolio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "test:smoke": "npx playwright test --grep @smoke",
+    "test:functional": "npx playwright test --grep @functional",
+    "test:regression": "npx playwright test --grep @regression",
+    "report:playwright": "npx playwright show-report",
+    "allure:generate": "npx allure generate allure-results --clean -o allure-report",
+    "allure:open": "npx allure open allure-report",
+    "report:allure": "npx run-s allure:generate allure:open",
+    "clean:allure": "npx rimraf allure-results allure-report",
+    "clean:node_modules": "npx rimraf node_modules",
+    "clean:reports": "npx rimraf test-results allure-results allure-report playwright-report",
+    "clean:all": "npx rimraf test-results allure-results allure-report node_modules playwright-report .auth",
+    "prepare": "npx playwright install"
+  },
+  "keywords": [],
+  "author": "Geetanjali - VerifyKoders",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "1.56.0",
+    "@types/node": "24.3.0",
+    "allure-commandline": "2.34.1",
+    "allure-playwright": "3.4.1",
+    "npm-run-all": "4.1.5",
+    "rimraf": "6.0.1"
+  }
+}
