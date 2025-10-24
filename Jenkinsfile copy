@@ -1,0 +1,131 @@
+pipeline {
+  agent any
+
+  parameters {
+    choice(
+      name: 'TEST_SUITE',
+      choices: ['regression', 'smoke'],
+      description: 'Select which test suite to run'
+    )
+
+    string(
+      name: 'BRANCH_NAME',
+      defaultValue: 'main',
+      description: 'Branch to build'
+    )
+
+    string(
+      name: 'MY_USERNAME',
+      defaultValue: '',
+      description: 'Playwright username'
+    )
+
+    password(
+      name: 'MY_PASSWORD',
+      defaultValue: '',
+      description: 'Playwright password'
+    )
+  }
+
+  environment {
+    MY_USERNAME = "${params.MY_USERNAME}"
+    MY_PASSWORD = "${params.MY_PASSWORD}"
+    NPM_CONFIG_USERCONFIG = "${WORKSPACE}/.npmrc"
+    ALLURE_RESULTS = "${WORKSPACE}/allure-results"
+    ALLURE_REPORT = "${WORKSPACE}/allure-report"
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timestamps()
+  }
+
+  tools {
+    nodejs 'NodeJS_24'
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        echo 'Checking out code from SCM...'
+        checkout scm
+      }
+    }
+
+    stage('Initialize') {
+      steps {
+        echo 'Cleaning old test results and workspace...'
+        sh 'rm -rf test-results playwright-report allure-results allure-report || true'
+      }
+    }
+
+    stage('Install Dependencies') {
+      steps {
+        echo 'Installing npm dependencies...'
+        sh 'npm ci --prefer-offline --no-audit'
+      }
+    }
+
+    stage('Install Playwright Browsers') {
+      steps {
+        sh 'npx playwright install chromium'
+      }
+    }
+
+    stage('Run Playwright Tests') {
+      steps {
+        script {
+          if (params.TEST_SUITE == 'smoke') {
+            echo 'Running SMOKE tests only...'
+            sh 'npx playwright test --grep "@smoke"'
+          } else {
+            echo 'Running FULL REGRESSION tests...'
+            sh 'npx playwright test'
+          }
+        }
+      }
+    }
+
+    stage('Generate Allure Report') {
+      steps {
+        echo 'Generating Allure report...'
+        sh 'npx allure generate $ALLURE_RESULTS --clean -o $ALLURE_REPORT || true'
+      }
+    }
+
+    stage('Archive Reports') {
+      steps {
+        echo 'Archiving test results and reports...'
+        junit '**/test-results/*.xml'
+        archiveArtifacts artifacts: '**/playwright-report/**', allowEmptyArchive: true
+        archiveArtifacts artifacts: '**/allure-report/**', allowEmptyArchive: true
+      }
+    }
+  }
+
+  post {
+    always {
+      echo 'Publishing Allure report...'
+      script {
+        allure([
+          includeProperties: false,
+          properties: [],
+          reportBuildPolicy: 'ALWAYS',
+          results: [[path: 'allure-results']]
+        ])
+      }
+
+      echo 'Cleaning temporary test artifacts...'
+      sh 'rm -rf playwright-report allure-results || true'
+    }
+
+    success {
+      echo 'Build Successful! All tests passed.'
+    }
+
+    failure {
+      echo 'Build Failed! Check the reports for details.'
+    }
+  }
+}
