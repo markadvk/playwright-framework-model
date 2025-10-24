@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { junit } from 'node:test/reporters';
 
 export default defineConfig({
   testDir: './src/tests',
@@ -6,11 +7,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 4 : undefined,
   timeout: 300000,
   reporter: [
     ['list'],
     ['allure-playwright'],
+    ['junit', { outputFile: './test-results/results.xml' }]
   ],
 
   use: {

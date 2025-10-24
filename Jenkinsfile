@@ -61,12 +61,19 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo "Running ${params.TEST_SUITE} tests..."
-                script {
-                    if (params.TEST_SUITE == 'all') {
-                        bat "npx playwright test --reporter=allure-playwright --output=allure-results"
-                    } else {
-                        bat "npx playwright test --grep @${params.TEST_SUITE} --reporter=allure-playwright --output=allure-results"
+                withCredentials([usernamePassword(
+                    credentialsId: 'PW_CREDS',
+                    usernameVariable: 'MY_USERNAME',
+                    passwordVariable: 'MY_PASSWORD'
+                )]) {
+                    echo "Running ${params.TEST_SUITE} tests..."
+
+                    script {
+                        if (params.TEST_SUITE == 'all') {
+                            bat "npx playwright test"
+                        } else {
+                            bat "npx playwright test --grep @${params.TEST_SUITE}"
+                        }
                     }
                 }
             }

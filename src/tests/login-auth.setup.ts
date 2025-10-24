@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/common/login/page';
-import { username, password } from '../../credentials';
+import { username, password } from '../utils/credentials';
 import { applyAllureMetadata } from '../utils/allureHelper';
 
 test('login and save auth state', async ({ page }) => {

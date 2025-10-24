@@ -13,7 +13,6 @@ allure-report/
 # Environment and credential files
 .auth/
 .env
-credentials.ts
 
 # IDE / Editor
 .vscode/
