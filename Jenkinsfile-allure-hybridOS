@@ -139,26 +139,10 @@ pipeline {
 
   post {
     success {
-      echo "All good! Sending success email..."
-      script {
-        if (params.EMAIL_RECIPIENTS?.trim()) {
-          emailext to: params.EMAIL_RECIPIENTS,
-                   from: "${env.JOB_NAME}-report <markadvk.sdet@gmail.com>",
-                   subject: "[SUCCESS] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "✅ Build successful. View: ${env.BUILD_URL}"
-        }
-      }
+      echo "Build Successful! Tests completed."
     }
     failure {
-      echo "Build failed! Notifying users..."
-      script {
-        if (params.EMAIL_RECIPIENTS?.trim()) {
-          emailext to: params.EMAIL_RECIPIENTS,
-                   from: "${env.JOB_NAME}-report <markadvk.sdet@gmail.com>",
-                   subject: "[FAILURE] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                   body: "❌ Build failed. Investigate: ${env.BUILD_URL}"
-        }
-      }
+      echo "Build Failed! Check reports for details."
     }
     always {
       echo "Light cleanup"
